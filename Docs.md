@@ -37,6 +37,7 @@ Built from scratch with:
 
 ```lua
 local Library = loadstring(game:HttpGet("https://pastebin.com/raw/vaq4eS2x"))()
+```
 
 ## 💾 Adding Config system
 
@@ -44,41 +45,41 @@ local Library = loadstring(game:HttpGet("https://pastebin.com/raw/vaq4eS2x"))()
 
 ```lua
 Library:LoadConfig()
-
+```
 ## Save config
 
 ```lua
 Library:SaveConfig()
-
+```
 ## 🖥 Creating Window
 
 ```lua
 local window = Library:CreateWindow("Title Name")
-
+```
 ## 📁 Creating Tabs
 
 ```lua
 local tab = window:CreateTab("Tab name")
-
+```
 ## creating button
 
 ```lua
 tab:CreateButton("Click Me", function()
     print("Button clicked")
 end)
-
+```
 ## Creating toggle
 
 ```lua
 tab:CreateToggle("Fullbright", false, function(state)
     print(state)
 end)
-
+```
 ## Creating text box
 
 ```lua
 tab:CreateTextbox("Username", "Player", function(text)
     print(text)
 end)
-
+```
 ## more soon
