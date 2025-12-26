@@ -1,4 +1,4 @@
-# Patrick UI Library
+# SubFlux ❄ UI Library
 
 ![Roblox](https://img.shields.io/badge/Roblox-Lua-red)
 ![Lua](https://img.shields.io/badge/Lua-5.1-blue)
