@@ -82,4 +82,8 @@ tab:CreateTextbox("Username", "Player", function(text)
     print(text)
 end)
 ```
-## more soon
+## Planned Updates
+•Adding Ui animation
+•silders and dropdown
+•Rich Text
+•More soon
