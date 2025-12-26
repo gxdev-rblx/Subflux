@@ -36,7 +36,7 @@ Built from scratch with:
 ## 📦 Installation
 
 ```lua
-local Library = loadstring(game:HttpGet("https://pastebin.com/raw/vaq4eS2x"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/gxdev-rblx/Subflux/refs/heads/main/Files/Subflux_Ui_lib_V1.luau"))()
 ```
 
 ## 💾 Adding Config system
