@@ -416,10 +416,14 @@ MotionTab:AddToggle("Spinbot", function(state)
     ArrayLibrary:Set("spinbot", state)
 end)
 
-MainTab:AddButton("Fly gui", function()
+MotionTab:AddButton("Fly gui", function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/gxdev-rblx/Subflux/refs/heads/main/Files/%E2%88%86~%C2%B6%E2%84%A2%60%7B~%E2%84%A2~%E2%84%85%E2%84%A2%E2%84%A2%E2%84%A2%E2%84%A2%E2%84%A2~%7B~%7B%E2%82%AC%E2%99%AA%CE%A0%C2%A7"))()
  ArrayLibrary:Set("Fly", true)
 end)
+
+MotionTab:AddButton("Tp walk gui", function()	loadstring(game:HttpGet("https://raw.githubusercontent.com/gxdev-rblx/Gx-lololoooollll/refs/heads/main/main.lua.txt",true))()
+end)
+
 
 MotionTab:AddToggle("No Clip", function(state)
 	noclipEnabled = state
