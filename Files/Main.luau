@@ -12,6 +12,24 @@ local spinSpeed = 720 -- degrees per second
 local noclipEnabled = false
 local playerESPEnabled = false
 local botESPEnabled = false
+local flyEnabled = false
+local flyHeight = 3
+local heightSpeed = 30
+
+local goingUp = false
+local goingDown = false
+
+----lol
+
+local platform = Instance.new("Part")
+platform.Name = "ekne92010Endo0001Platform"
+platform.Size = Vector3.new(6, 1, 6)
+platform.Anchored = true
+platform.CanCollide = true
+platform.Transparency = 1
+platform.Parent = workspace
+
+
 
 local playerESPColor = Color3.fromRGB(0, 0, 255)
 local botESPColor = Color3.fromRGB(255, 0, 0)
@@ -367,9 +385,6 @@ MainTab:AddToggle("Killaura [Universal]", function(state)
     SetRotate(state)
 end)
 
-MainTab:AddToggle("Speed", function(state)
-	ArrayLibrary:Set("Speed", state)
-end)
 
 MainTab:AddToggle("Hitbox", function(state)
 	ArrayLibrary:Set("Hitbox", state)
@@ -401,6 +416,17 @@ end)
 MotionTab:AddToggle("Spinbot", function(state)
 	spinEnabled = state
     ArrayLibrary:Set("spinbot", state)
+end)
+
+MotionTab:AddToggle("Fly", function(state)
+	flyEnabled = state
+
+	if not state then
+		platform.Parent = nil
+	else
+		platform.Parent = workspace
+	end
+ ArrayLibrary:Set("Fly", state)
 end)
 
 MotionTab:AddToggle("No Clip", function(state)
@@ -437,6 +463,7 @@ VisualsTab:AddToggle("NPC ESP", function(state)
  ArrayLibrary:Set("Esp [NPC]", state)
 end)
 
+------------- toggleends
 
 Players.PlayerAdded:Connect(function(plr)
 	plr.CharacterAdded:Connect(function()
@@ -457,5 +484,84 @@ Workspace.DescendantAdded:Connect(function(obj)
 	if botESPEnabled and isNPC(obj) then
 		task.wait(0.1)
 		createBox(obj, botESPColor)
+	end
+end)
+
+local mobileGui = Instance.new("ScreenGui")
+mobileGui.Name = "Pwineo1023"
+mobileGui.Parent = game.CoreGui
+mobileGui.ResetOnSpawn = false
+
+local upBtn = Instance.new("TextButton")
+upBtn.Size = UDim2.new(0, 50, 0, 50)
+upBtn.Position = UDim2.new(1, -65, 0.6, -55)
+upBtn.Text = "▲"
+upBtn.Font = Enum.Font.Code
+upBtn.TextSize = 28
+upBtn.BackgroundColor3 = Color3.fromRGB(0,0,0)
+upBtn.TextColor3 = Color3.fromRGB(255,255,255)
+upBtn.Visible = false
+upBtn.Parent = mobileGui
+
+local downBtn = upBtn:Clone()
+downBtn.Text = "▼"
+downBtn.Position = UDim2.new(1, -65, 0.6, 5)
+downBtn.Parent = mobileGui
+
+upBtn.MouseButton1Down:Connect(function()
+	goingUp = true
+end)
+upBtn.MouseButton1Up:Connect(function()
+	goingUp = false
+end)
+
+downBtn.MouseButton1Down:Connect(function()
+	goingDown = true
+end)
+downBtn.MouseButton1Up:Connect(function()
+	goingDown = false
+end)
+
+------------------------------------------------
+-- PLATFORM FOLLOW + HEIGHT CONTROL
+------------------------------------------------
+
+RunService.RenderStepped:Connect(function(dt)
+	if not flyEnabled then
+		upBtn.Visible = false
+		downBtn.Visible = false
+		return
+	end
+
+	upBtn.Visible = true
+	downBtn.Visible = true
+
+	if goingUp then
+		flyHeight += heightSpeed * dt
+	elseif goingDown then
+		flyHeight -= heightSpeed * dt
+	end
+
+	local character = player.Character
+	if not character then return end
+
+	local root = character:FindFirstChild("HumanoidRootPart")
+	if not root then return end
+
+	platform.CFrame = CFrame.new(
+		root.Position.X,
+		root.Position.Y - flyHeight,
+		root.Position.Z
+	)
+end)
+
+------------------------------------------------
+-- RESPAWN FIX
+------------------------------------------------
+
+player.CharacterAdded:Connect(function()
+	if flyEnabled then
+		task.wait(0.2)
+		platform.Parent = workspace
 	end
 end)
