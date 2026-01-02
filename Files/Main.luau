@@ -9,6 +9,80 @@ local RunService = game:GetService("RunService")
 local spinEnabled = false
 local spinSpeed = 720 -- degrees per second
 local noclipEnabled = false
+local playerESPEnabled = false
+local botESPEnabled = false
+
+local playerESPColor = Color3.fromRGB(0, 0, 255)
+local botESPColor = Color3.fromRGB(255, 0, 0)
+
+local espFolder = Instance.new("Folder")
+espFolder.Name = "wjendi193902Q"
+espFolder.Parent = game.CoreGui
+
+------------------------------------------------
+-- UTIL FUNCTIONS
+------------------------------------------------
+
+local function createBox(model, color)
+	if not model:FindFirstChild("HumanoidRootPart") then return end
+	if model:FindFirstChild("PatrickBox") then return end
+
+	local box = Instance.new("BoxHandleAdornment")
+	box.Name = "PatrickBox"
+	box.Adornee = model.HumanoidRootPart
+	box.AlwaysOnTop = true
+	box.ZIndex = 10
+	box.Size = Vector3.new(4, 6, 2)
+	box.Transparency = 0.6
+	box.Color3 = color
+	box.Parent = espFolder
+end
+
+local function removeBox(model)
+	local box = model:FindFirstChild("PatrickBox")
+	if box then
+		box:Destroy()
+	end
+end
+
+------------------------------------------------
+-- PLAYER ESP
+------------------------------------------------
+
+local function updatePlayerESP()
+	for _, plr in pairs(Players:GetPlayers()) do
+		if plr ~= player and plr.Character then
+			if playerESPEnabled then
+				createBox(plr.Character, playerESPColor)
+			else
+				removeBox(plr.Character)
+			end
+		end
+	end
+end
+
+------------------------------------------------
+-- BOT / NPC ESP
+------------------------------------------------
+
+local function isNPC(model)
+	return model:IsA("Model")
+		and model:FindFirstChild("Humanoid")
+		and not Players:GetPlayerFromCharacter(model)
+end
+
+local function updateBotESP()
+	for _, obj in pairs(Workspace:GetDescendants()) do
+		if isNPC(obj) then
+			if botESPEnabled then
+				createBox(obj, botESPColor)
+			else
+				removeBox(obj)
+			end
+		end
+	end
+end
+
 
 RunService.RenderStepped:Connect(function(dt)
 	if not spinEnabled then return end
@@ -22,6 +96,28 @@ RunService.RenderStepped:Connect(function(dt)
 	if root and humanoid and humanoid.Health > 0 then
 		-- Rotate character smoothly without breaking movement
 		root.CFrame = root.CFrame * CFrame.Angles(0, math.rad(spinSpeed * dt), 0)
+	end
+end)
+
+Players.PlayerAdded:Connect(function(plr)
+	plr.CharacterAdded:Connect(function()
+		task.wait(0.2)
+		if playerESPEnabled then
+			updatePlayerESP()
+		end
+	end)
+end)
+
+player.CharacterAdded:Connect(function()
+	task.wait(0.2)
+	updatePlayerESP()
+end)
+
+-- NPC spawn
+Workspace.DescendantAdded:Connect(function(obj)
+	if botESPEnabled and isNPC(obj) then
+		task.wait(0.1)
+		createBox(obj, botESPColor)
 	end
 end)
 
@@ -283,7 +379,7 @@ end)
 local MainTab = Window:CreateTab("Combat")
 local MotionTab = Window:CreateTab("Motion")
 local UtilityTab = Window:CreateTab("Utility")
-
+local VisualsTab = Window:CreateTab("Visuals")
 
 MainTab:AddToggle("Killaura [Universal]", function(state)
 	ArrayLibrary:Set("Killaura", state)
@@ -348,3 +444,14 @@ end)
 UtilityTab:AddButton("Fps Counter", function()	loadstring(game:HttpGet("https://pastebin.com/raw/ySHJdZpb",true))()
 end)
 
+VisualsTab:AddToggle("Player ESP", function(state)
+	playerESPEnabled = state
+	updatePlayerESP()
+ ArrayLibrary:Set("Esp [Player]", state)
+end)
+
+VisualsTab:AddToggle("NPC ESP", function(state)
+	botESPEnabled = state
+	updateBotESP()
+ ArrayLibrary:Set("Esp [NPC]", state)
+end)
