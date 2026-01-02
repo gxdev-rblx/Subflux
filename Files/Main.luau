@@ -13,11 +13,11 @@ local noclipEnabled = false
 local playerESPEnabled = false
 local botESPEnabled = false
 local flyEnabled = false
-local flyHeight = 3
-local heightSpeed = 30
+local flyOffset = 2.8 -- distance from HRP to platform
+local verticalSpeed = 40
 
-local goingUp = false
-local goingDown = false
+local up = false
+local down = false
 
 ----lol
 
@@ -29,7 +29,24 @@ platform.CanCollide = true
 platform.Transparency = 1
 platform.Parent = workspace
 
+local function createBtn(text, posY)
+	local b = Instance.new("TextButton")
+	b.Size = UDim2.new(0, 55, 0, 55)
+	b.Position = UDim2.new(1, -70, posY, 0)
+	b.Text = text
+	b.Font = Enum.Font.Code
+	b.TextSize = 28
+	b.BackgroundColor3 = Color3.fromRGB(0,0,0)
+	b.BorderColor3 = Color3.fromRGB(0,0,180)
+	b.BorderSizePixel = 2
+	b.TextColor3 = Color3.fromRGB(255,255,255)
+	b.Visible = false
+	b.Parent = mobileGui
+	return b
+end
 
+local upBtn = createBtn("▲", 0.55)
+local downBtn = createBtn("▼", 0.65)
 
 local playerESPColor = Color3.fromRGB(0, 0, 255)
 local botESPColor = Color3.fromRGB(255, 0, 0)
@@ -420,12 +437,9 @@ end)
 
 MotionTab:AddToggle("Fly", function(state)
 	flyEnabled = state
-
-	if not state then
-		platform.Parent = nil
-	else
-		platform.Parent = workspace
-	end
+	platform.Parent = state and workspace or nil
+	upBtn.Visible = state
+	downBtn.Visible = state
  ArrayLibrary:Set("Fly", state)
 end)
 
@@ -487,70 +501,47 @@ Workspace.DescendantAdded:Connect(function(obj)
 	end
 end)
 
-local mobileGui = Instance.new("ScreenGui")
-mobileGui.Name = "Pwineo1023"
-mobileGui.Parent = game.CoreGui
-mobileGui.ResetOnSpawn = false
-
-local upBtn = Instance.new("TextButton")
-upBtn.Size = UDim2.new(0, 50, 0, 50)
-upBtn.Position = UDim2.new(1, -65, 0.6, -55)
-upBtn.Text = "▲"
-upBtn.Font = Enum.Font.Code
-upBtn.TextSize = 28
-upBtn.BackgroundColor3 = Color3.fromRGB(0,0,0)
-upBtn.TextColor3 = Color3.fromRGB(255,255,255)
-upBtn.Visible = false
-upBtn.Parent = mobileGui
-
-local downBtn = upBtn:Clone()
-downBtn.Text = "▼"
-downBtn.Position = UDim2.new(1, -65, 0.6, 5)
-downBtn.Parent = mobileGui
-
 upBtn.MouseButton1Down:Connect(function()
-	goingUp = true
+	up = true
 end)
 upBtn.MouseButton1Up:Connect(function()
-	goingUp = false
+	up = false
 end)
 
 downBtn.MouseButton1Down:Connect(function()
-	goingDown = true
+	down = true
 end)
 downBtn.MouseButton1Up:Connect(function()
-	goingDown = false
+	down = false
 end)
 
 ------------------------------------------------
--- PLATFORM FOLLOW + HEIGHT CONTROL
+-- PLATFORM FLY CORE
 ------------------------------------------------
 
-RunService.RenderStepped:Connect(function(dt)
-	if not flyEnabled then
-		upBtn.Visible = false
-		downBtn.Visible = false
-		return
+RunService.Heartbeat:Connect(function(dt)
+	if not flyEnabled then return end
+
+	local char = player.Character
+	if not char then return end
+
+	local hum = char:FindFirstChildOfClass("Humanoid")
+	local root = char:FindFirstChild("HumanoidRootPart")
+	if not hum or not root then return end
+
+	if up then
+		flyOffset += verticalSpeed * dt
+	elseif down then
+		flyOffset -= verticalSpeed * dt
 	end
 
-	upBtn.Visible = true
-	downBtn.Visible = true
+	flyOffset = math.clamp(flyOffset, 2, 150)
 
-	if goingUp then
-		flyHeight += heightSpeed * dt
-	elseif goingDown then
-		flyHeight -= heightSpeed * dt
-	end
-
-	local character = player.Character
-	if not character then return end
-
-	local root = character:FindFirstChild("HumanoidRootPart")
-	if not root then return end
+	hum:ChangeState(Enum.HumanoidStateType.Running)
 
 	platform.CFrame = CFrame.new(
 		root.Position.X,
-		root.Position.Y - flyHeight,
+		root.Position.Y - flyOffset,
 		root.Position.Z
 	)
 end)
@@ -561,7 +552,8 @@ end)
 
 player.CharacterAdded:Connect(function()
 	if flyEnabled then
-		task.wait(0.2)
+		task.wait(0.3)
 		platform.Parent = workspace
 	end
 end)
+
