@@ -5,6 +5,7 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local UIS = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
+local Workspace = game:GetService("Workspace")
 
 local spinEnabled = false
 local spinSpeed = 720 -- degrees per second
