@@ -1,6 +1,12 @@
 --// Array List UI Library
 --// Fully LocalScript
 
+game:GetService("StarterGui"):SetCore("SendNotification", { 
+	Title = "Subflux Beta";
+	Text = "BY Tg@Red01ma";
+	Icon = "rbxthumb://type=Asset&id=5107182114&w=150&h=150"})
+Duration = 5;
+
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local UIS = game:GetService("UserInputService")
@@ -21,32 +27,7 @@ local down = false
 
 ----lol
 
-local platform = Instance.new("Part")
-platform.Name = "ekne92010Endo0001Platform"
-platform.Size = Vector3.new(6, 1, 6)
-platform.Anchored = true
-platform.CanCollide = true
-platform.Transparency = 1
-platform.Parent = workspace
 
-local function createBtn(text, posY)
-	local b = Instance.new("TextButton")
-	b.Size = UDim2.new(0, 55, 0, 55)
-	b.Position = UDim2.new(1, -70, posY, 0)
-	b.Text = text
-	b.Font = Enum.Font.Code
-	b.TextSize = 28
-	b.BackgroundColor3 = Color3.fromRGB(0,0,0)
-	b.BorderColor3 = Color3.fromRGB(0,0,180)
-	b.BorderSizePixel = 2
-	b.TextColor3 = Color3.fromRGB(255,255,255)
-	b.Visible = false
-	b.Parent = mobileGui
-	return b
-end
-
-local upBtn = createBtn("▲", 0.55)
-local downBtn = createBtn("▼", 0.65)
 
 local playerESPColor = Color3.fromRGB(0, 0, 255)
 local botESPColor = Color3.fromRGB(255, 0, 0)
@@ -435,12 +416,9 @@ MotionTab:AddToggle("Spinbot", function(state)
     ArrayLibrary:Set("spinbot", state)
 end)
 
-MotionTab:AddToggle("Fly", function(state)
-	flyEnabled = state
-	platform.Parent = state and workspace or nil
-	upBtn.Visible = state
-	downBtn.Visible = state
- ArrayLibrary:Set("Fly", state)
+MainTab:AddButton("Fly gui", function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/gxdev-rblx/Subflux/refs/heads/main/Files/%E2%88%86~%C2%B6%E2%84%A2%60%7B~%E2%84%A2~%E2%84%85%E2%84%A2%E2%84%A2%E2%84%A2%E2%84%A2%E2%84%A2~%7B~%7B%E2%82%AC%E2%99%AA%CE%A0%C2%A7"))()
+ ArrayLibrary:Set("Fly", true)
 end)
 
 MotionTab:AddToggle("No Clip", function(state)
@@ -501,59 +479,5 @@ Workspace.DescendantAdded:Connect(function(obj)
 	end
 end)
 
-upBtn.MouseButton1Down:Connect(function()
-	up = true
-end)
-upBtn.MouseButton1Up:Connect(function()
-	up = false
-end)
 
-downBtn.MouseButton1Down:Connect(function()
-	down = true
-end)
-downBtn.MouseButton1Up:Connect(function()
-	down = false
-end)
-
-------------------------------------------------
--- PLATFORM FLY CORE
-------------------------------------------------
-
-RunService.Heartbeat:Connect(function(dt)
-	if not flyEnabled then return end
-
-	local char = player.Character
-	if not char then return end
-
-	local hum = char:FindFirstChildOfClass("Humanoid")
-	local root = char:FindFirstChild("HumanoidRootPart")
-	if not hum or not root then return end
-
-	if up then
-		flyOffset += verticalSpeed * dt
-	elseif down then
-		flyOffset -= verticalSpeed * dt
-	end
-
-	flyOffset = math.clamp(flyOffset, 2, 150)
-
-	hum:ChangeState(Enum.HumanoidStateType.Running)
-
-	platform.CFrame = CFrame.new(
-		root.Position.X,
-		root.Position.Y - flyOffset,
-		root.Position.Z
-	)
-end)
-
-------------------------------------------------
--- RESPAWN FIX
-------------------------------------------------
-
-player.CharacterAdded:Connect(function()
-	if flyEnabled then
-		task.wait(0.3)
-		platform.Parent = workspace
-	end
-end)
 
