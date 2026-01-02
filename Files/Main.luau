@@ -99,27 +99,7 @@ RunService.RenderStepped:Connect(function(dt)
 	end
 end)
 
-Players.PlayerAdded:Connect(function(plr)
-	plr.CharacterAdded:Connect(function()
-		task.wait(0.2)
-		if playerESPEnabled then
-			updatePlayerESP()
-		end
-	end)
-end)
 
-player.CharacterAdded:Connect(function()
-	task.wait(0.2)
-	updatePlayerESP()
-end)
-
--- NPC spawn
-Workspace.DescendantAdded:Connect(function(obj)
-	if botESPEnabled and isNPC(obj) then
-		task.wait(0.1)
-		createBox(obj, botESPColor)
-	end
-end)
 
 --// ScreenGui
 local gui = Instance.new("ScreenGui")
@@ -454,4 +434,27 @@ VisualsTab:AddToggle("NPC ESP", function(state)
 	botESPEnabled = state
 	updateBotESP()
  ArrayLibrary:Set("Esp [NPC]", state)
+end)
+
+
+Players.PlayerAdded:Connect(function(plr)
+	plr.CharacterAdded:Connect(function()
+		task.wait(0.2)
+		if playerESPEnabled then
+			updatePlayerESP()
+		end
+	end)
+end)
+
+player.CharacterAdded:Connect(function()
+	task.wait(0.2)
+	updatePlayerESP()
+end)
+
+-- NPC spawn
+Workspace.DescendantAdded:Connect(function(obj)
+	if botESPEnabled and isNPC(obj) then
+		task.wait(0.1)
+		createBox(obj, botESPColor)
+	end
 end)
