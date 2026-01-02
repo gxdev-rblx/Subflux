@@ -7,7 +7,7 @@ local UIS = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 
 local spinEnabled = false
-local spinSpeed = 360 -- degrees per second
+local spinSpeed = 720 -- degrees per second
 local noclipEnabled = false
 
 RunService.RenderStepped:Connect(function(dt)
@@ -312,7 +312,7 @@ MotionTab:AddTextbox("JumpPower", function(text)
 end)
 
 MotionTab:AddTextbox("Gravity", function(text)
-	game.Workspace.Gravity = (t)
+	game.Workspace.Gravity = (text)
 end)
 
 
